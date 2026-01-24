@@ -17,7 +17,7 @@ echo "Detected shell: $shell_name"
 echo "Shell config file: $rc_file"
 
 # Ask for base folder
-default_root="$HOME/Documents/CodeFolder"
+default_root="$HOME/CodeFolder"
 read -r -p "Code projects root [$default_root]: " root
 root="${root:-$default_root}"
 
