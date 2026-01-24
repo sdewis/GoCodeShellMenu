@@ -2,7 +2,7 @@
 
 # shellcheck shell=bash
 gomenu() {
-  local root="$HOME/Documents/CodeFolder"
+  local root="$HOME/CodeFolder"
   cd "$root" || { printf '\e[31mgomenu: cannot cd to %s\e[0m\n' "$root" >&2; return 1; }
 
   # Colors
