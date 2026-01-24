@@ -5,7 +5,7 @@ choose a project with `gomenu`.
 
 ## Functions
 
-- `gocode`: `cd` to `~/Documents/CodeFolder`.
+- `gocode`: `cd` to `~/CodeFolder`.
 - `gomenu`: interactive, colored project picker that:
   - sorts projects by most-recently-modified
   - lets you page through them (5 per page)
