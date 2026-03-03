@@ -40,10 +40,15 @@ gomenu() {
 
   # Check if archive drive is available and partition is mounted
   local archive_available=0
-  if lsusb -d "$wd_id" > /dev/null 2>&1 && mountpoint -q "/media/sean/Data"; then
-    if [ -d "$archive_dest" ] || mkdir -p "$archive_dest" 2>/dev/null; then
-      if (( total > 4 )); then
-        archive_available=1
+  # Check mountpoint first as it's nearly instantaneous (no hardware poll)
+  if mountpoint -q "/media/sean/Data"; then
+    # Then check for the specific WD device via sysfs (much faster than lsusb)
+    if grep -q "1058" /sys/bus/usb/devices/*/idVendor 2>/dev/null && \
+       grep -q "10b8" /sys/bus/usb/devices/*/idProduct 2>/dev/null; then
+      if [ -d "$archive_dest" ] || mkdir -p "$archive_dest" 2>/dev/null; then
+        if (( total > 4 )); then
+          archive_available=1
+        fi
       fi
     fi
   fi
