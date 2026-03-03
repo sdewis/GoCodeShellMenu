@@ -21,6 +21,8 @@ gomenu() {
   local per_page=5
   local offset=0
   local total
+  local wd_id="1058:10b8"
+  local archive_dest="/media/sean/Data/fromLUKS/CodeFolder/"
 
   # Capture any currently active venv so we can offer to deactivate
   local prev_venv="${VIRTUAL_ENV:-}"
@@ -34,6 +36,16 @@ gomenu() {
   if (( total == 0 )); then
     printf '%sgomenu: no project directories found in %s%s\n' "$c_warn" "$root" "$c_reset" >&2
     return 1
+  fi
+
+  # Check if archive drive is available and partition is mounted
+  local archive_available=0
+  if lsusb -d "$wd_id" > /dev/null 2>&1 && mountpoint -q "/media/sean/Data"; then
+    if [ -d "$archive_dest" ] || mkdir -p "$archive_dest" 2>/dev/null; then
+      if (( total > 4 )); then
+        archive_available=1
+      fi
+    fi
   fi
 
   while :; do
@@ -54,9 +66,12 @@ gomenu() {
     if (( offset > 0 )); then
       printf '  %sp%s) previous page\n' "$c_key" "$c_reset"
     fi
+    if (( archive_available == 1 )); then
+      printf '  %sa%s) %sarchive older projects%s (beyond 4 most recent)\n' "$c_key" "$c_reset" "$c_warn" "$c_reset"
+    fi
     printf '  %sq%s) quit %s(or Esc / Ctrl+C)%s\n' "$c_key" "$c_reset" "$c_dim" "$c_reset"
 
-    printf '\nSelect project [%s1-%d%s, %sn/p/q%s]: ' "$c_number" "$per_page" "$c_reset" "$c_key" "$c_reset"
+    printf '\nSelect project [%s1-%d%s, %sn/p/a/q%s]: ' "$c_number" "$per_page" "$c_reset" "$c_key" "$c_reset"
 
     # Single-key read, Bash and Zsh compatible
     local key
@@ -84,6 +99,46 @@ gomenu() {
           offset=$((offset - per_page))
         else
           offset=0
+        fi
+        ;;
+      a|A)
+        if (( archive_available == 1 )); then
+          printf '\n\n%sArchiving projects to WD Elements%s\n' "$c_header" "$c_reset"
+          local to_archive=("${_gomenu_dirs[@]:4}")
+          printf 'The following %d project(s) will be moved to %s%s%s:\n' "${#to_archive[@]}" "$c_path" "$archive_dest" "$c_reset"
+          for p in "${to_archive[@]}"; do
+            printf '  - %s\n' "$p"
+          done
+          printf '\nProceed with move? [%sy%s/N]: ' "$c_key" "$c_reset"
+          local c_ans
+          read -r c_ans
+          if [[ "$c_ans" =~ ^[yY]$ ]]; then
+            for proj in "${to_archive[@]}"; do
+              local src_path="$root/$proj"
+              local dest_path="$archive_dest/$proj"
+              if [ -d "$dest_path" ]; then
+                if [ "$src_path" -nt "$dest_path" ]; then
+                  printf 'Updating %s (source is newer)...\n' "$proj"
+                  rsync -av --delete "$src_path/" "$dest_path/" && rm -rf "$src_path"
+                else
+                  printf 'Skipping %s (destination is up to date or newer). Removing local copy...\n' "$proj"
+                  rm -rf "$src_path"
+                fi
+              else
+                printf 'Moving %s to archive...\n' "$proj"
+                mv "$src_path" "$dest_path"
+              fi
+            done
+            printf '%sArchival complete. Re-scanning...%s\n' "$c_dim" "$c_reset"
+            sleep 1
+            # Rescan directories
+            mapfile -t _gomenu_dirs < <(find . -maxdepth 1 -mindepth 1 -type d -printf '%T@ %P\n' \
+              | sort -nr \
+              | awk '{ $1=""; sub(/^ /,""); print }')
+            total=${#_gomenu_dirs[@]}
+            offset=0
+            if (( total <= 4 )); then archive_available=0; fi
+          fi
         fi
         ;;
       [1-5])
