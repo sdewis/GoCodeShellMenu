@@ -1,15 +1,14 @@
+}
+
 qjump() {
     local root="/home/sean/CodeFolder"
-    if [ -z "" ]; then
-        echo -e "Usage: qjump <partial_name>"
+    if [ -z "$1" ]; then
+        echo -e "${YELLOW}Usage: qjump <partial_name>${RESET}"
         return 1
     fi
     
-    local match=
+    local match=$(find "$root" -maxdepth 1 -mindepth 1 -type d -iname "*$1*" -print -quit)
     
-    if [ -n "" ]; then
-        cd "" && echo -e "» Moved to /home/sean/CodeFolder/GoCodeShellMenu"
+    if [ -n "$match" ]; then
+        cd "$match" && echo -e "${GREEN}» Moved to $(pwd)${RESET}"
     else
-        echo -e "No project matching '' found."
-    fi
-}

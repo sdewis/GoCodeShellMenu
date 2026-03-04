@@ -1,34 +1,35 @@
+    echo -e "${GREEN}✔ Context packed. Copy $out to your LLM.${RESET}"
+}
+
 proj_doctor() {
-    echo -e "🩺 Checking project health in /home/sean/CodeFolder/GoCodeShellMenu..."
+    echo -e "${CYAN}🩺 Checking project health in $(pwd)...${RESET}"
     
     if [ -d .git ]; then
-        local status=?? """"
-        if [ -z "" ]; then
-            echo -e "  ● Git: Clean"
+        local status=$(git status --short)
+        if [ -z "$status" ]; then
+            echo -e "  ${GREEN}●${RESET} Git: Clean"
         else
-            echo -e "  ● Git: Uncommitted changes"
+            echo -e "  ${YELLOW}●${RESET} Git: Uncommitted changes"
         fi
     else
-        echo -e "  ● Git: Not a repository"
+        echo -e "  ${RED}●${RESET} Git: Not a repository"
     fi
     
     if [ -f requirements.txt ]; then
         if [ -d .venv ] || [ -d venv ]; then
-            echo -e "  ● Python: Virtualenv found"
+            echo -e "  ${GREEN}●${RESET} Python: Virtualenv found"
         else
-            echo -e "  ● Python: No virtualenv for requirements.txt"
+            echo -e "  ${YELLOW}●${RESET} Python: No virtualenv for requirements.txt"
         fi
     fi
 
     if [ -f package.json ]; then
         if [ -d node_modules ]; then
-            echo -e "  ● Node: node_modules found"
+            echo -e "  ${GREEN}●${RESET} Node: node_modules found"
         else
-            echo -e "  ● Node: node_modules missing (run npm install)"
+            echo -e "  ${RED}●${RESET} Node: node_modules missing (run npm install)"
         fi
     fi
     
     if [ -f .env.example ] && [ ! -f .env ]; then
-        echo -e "  ● Config: .env missing (example found)"
-    fi
-}
+        echo -e "  ${RED}●${RESET} Config: .env missing (example found)"
