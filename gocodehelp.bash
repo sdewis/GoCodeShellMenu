@@ -1,0 +1,15 @@
+gocodehelp() {
+    echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e "  🚀 GoCode Shell Tools - Command Reference"
+    echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo -e "  gocode       : Jump to the main CodeFolder root."
+    echo -e "  gomenu       : Interactive project navigator and environment manager."
+    echo -e "  gsnap        : Fearless Git branch snapshot (saves uncommitted work)."
+    echo -e "  sync_backup  : Fast Git auto-sync (commit + push) for current repo."
+    echo -e "  ai_pack      : Pack project into a single .md file for LLM context."
+    echo -e "  proj_doctor  : Diagnostic check for Git, Python (venv), and Node."
+    echo -e "  qjump <name> : Quick-jump to a project directory using fuzzy search."
+    echo -e "  todo "msg"   : Add a task to your global todo list."
+    echo -e "  ai_start     : Prepare environment for Gemini/AI-assisted coding."
+    echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
