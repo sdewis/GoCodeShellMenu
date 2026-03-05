@@ -1,6 +1,3 @@
-    echo -e "${GREEN}✔ Context packed. Copy $out to your LLM.${RESET}"
-}
-
 proj_doctor() {
     echo -e "${CYAN}🩺 Checking project health in $(pwd)...${RESET}"
     
@@ -33,3 +30,5 @@ proj_doctor() {
     
     if [ -f .env.example ] && [ ! -f .env ]; then
         echo -e "  ${RED}●${RESET} Config: .env missing (example found)"
+    fi
+}

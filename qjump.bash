@@ -1,5 +1,3 @@
-}
-
 qjump() {
     local root="/home/sean/CodeFolder"
     if [ -z "$1" ]; then
@@ -12,3 +10,6 @@ qjump() {
     if [ -n "$match" ]; then
         cd "$match" && echo -e "${GREEN}» Moved to $(pwd)${RESET}"
     else
+        echo -e "${RED}No project matching '$1' found.${RESET}"
+    fi
+}
